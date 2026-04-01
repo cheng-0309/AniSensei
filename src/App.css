@@ -14,21 +14,23 @@ h1 {
   margin-bottom: 20px;
 }
 
+/* GRID SYSTEM */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
 }
 
+/* CARD */
 .card {
   background: #1e293b;
-  padding: 10px;
-  border-radius: 10px;
+  padding: 12px;
+  border-radius: 12px;
   transition: transform 0.2s ease;
 }
 
 .card:hover {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
 .card img {
@@ -37,7 +39,7 @@ h1 {
 }
 
 .card h2 {
-  font-size: 16px;
+  font-size: 15px;
   margin: 10px 0;
 }
 
@@ -50,4 +52,35 @@ h1 {
   display: block;
   margin-top: 8px;
   font-weight: bold;
+}
+
+/* STATES */
+.center {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.error {
+  color: red;
+}
+
+/* RESPONSIVE BREAKPOINTS */
+@media (max-width: 768px) {
+  .card h2 {
+    font-size: 14px;
+  }
+
+  .card p {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
 }

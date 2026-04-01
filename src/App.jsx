@@ -4,25 +4,41 @@ import "./App.css";
 function App() {
   const [animeList, setAnimeList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("https://api.jikan.moe/v4/anime")
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchAnime = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("https://api.jikan.moe/v4/anime");
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const data = await res.json();
         setAnimeList(data.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching data:", err);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchAnime();
   }, []);
 
-  if (loading) return <h2>Loading...</h2>;
+  if (loading) {
+    return <h2 className="center">Loading anime...</h2>;
+  }
+
+  if (error) {
+    return <h2 className="center error">{error}</h2>;
+  }
 
   return (
     <div className="container">
-      <h1>Anime List</h1>
+      <h1>Anime Explorer</h1>
 
       <div className="grid">
         {animeList.map((anime) => (
@@ -36,11 +52,11 @@ function App() {
 
             <p>
               {anime.synopsis
-                ? anime.synopsis.slice(0, 120) + "..."
-                : "No description"}
+                ? anime.synopsis.slice(0, 100) + "..."
+                : "No description available"}
             </p>
 
-            <span>Score: {anime.score || "N/A"}</span>
+            <span>⭐ {anime.score || "N/A"}</span>
           </div>
         ))}
       </div>
