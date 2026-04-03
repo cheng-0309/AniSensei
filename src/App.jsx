@@ -3,57 +3,76 @@ import "./App.css";
 
 function App() {
   const [animeList, setAnimeList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [search, setSearch] = useState("");
+  const [sortType, setSortType] = useState("default");
 
   useEffect(() => {
-    const fetchAnime = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch("https://api.jikan.moe/v4/anime");
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch data");
-        }
-
-        const data = await res.json();
+    fetch("https://api.jikan.moe/v4/anime")
+      .then((res) => res.json())
+      .then((data) => {
         setAnimeList(data.data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAnime();
+      })
+      .catch((err) => console.error(err));
   }, []);
 
-  if (loading) {
-    return <h2 className="center">Loading anime...</h2>;
-  }
+  // SEARCH (basic filter)
+  const filtered = animeList.filter((anime) =>
+    (anime.title || "")
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
 
-  if (error) {
-    return <h2 className="center error">{error}</h2>;
-  }
+  // SORT
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortType === "score") {
+      return (b.score || 0) - (a.score || 0);
+    }
+
+    if (sortType === "title") {
+      return (a.title || "").localeCompare(b.title || "");
+    }
+
+    return 0;
+  });
 
   return (
     <div className="container">
-      <h1>Anime Explorer</h1>
+      <h1>AniSensei</h1>
 
+      {/* CONTROLS */}
+      <div className="controls">
+        <input
+          type="text"
+          placeholder="Search anime..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+        <select
+          value={sortType}
+          onChange={(e) => setSortType(e.target.value)}
+        >
+          <option value="default">Sort</option>
+          <option value="score">Top Rated</option>
+          <option value="title">A-Z</option>
+        </select>
+      </div>
+
+      {/* GRID */}
       <div className="grid">
-        {animeList.map((anime) => (
+        {sorted.map((anime) => (
           <div key={anime.mal_id} className="card">
             <img
-              src={anime.images.jpg.image_url}
+              src={anime.images?.jpg?.image_url}
               alt={anime.title}
             />
 
-            <h2>{anime.title}</h2>
+            <h3>{anime.title}</h3>
 
             <p>
               {anime.synopsis
-                ? anime.synopsis.slice(0, 100) + "..."
-                : "No description available"}
+                ? anime.synopsis.slice(0, 80) + "..."
+                : "No description"}
             </p>
 
             <span>⭐ {anime.score || "N/A"}</span>
