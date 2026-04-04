@@ -5,27 +5,31 @@ function App() {
   const [animeList, setAnimeList] = useState([]);
   const [search, setSearch] = useState("");
   const [sortType, setSortType] = useState("default");
+  const [minScore, setMinScore] = useState(0);
 
   useEffect(() => {
     fetch("https://api.jikan.moe/v4/anime")
       .then((res) => res.json())
-      .then((data) => {
-        setAnimeList(data.data);
-      })
+      .then((data) => setAnimeList(data.data))
       .catch((err) => console.error(err));
   }, []);
 
-  // SEARCH (basic filter)
-  const filtered = animeList.filter((anime) =>
-    (anime.title || "")
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  );
+  // SEARCH
+  const filtered = animeList
+    .filter((anime) =>
+      (anime.title || "")
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    )
+    // SCORE FILTER (new feature)
+    .filter((anime) => (anime.score ?? 0) >= minScore);
 
-  // SORT
+  // SORT (FIXED null issue)
   const sorted = [...filtered].sort((a, b) => {
     if (sortType === "score") {
-      return (b.score || 0) - (a.score || 0);
+      const scoreA = a.score ?? 0;
+      const scoreB = b.score ?? 0;
+      return scoreB - scoreA;
     }
 
     if (sortType === "title") {
@@ -41,6 +45,7 @@ function App() {
 
       {/* CONTROLS */}
       <div className="controls">
+        {/* SEARCH */}
         <input
           type="text"
           placeholder="Search anime..."
@@ -48,6 +53,7 @@ function App() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
+        {/* SORT */}
         <select
           value={sortType}
           onChange={(e) => setSortType(e.target.value)}
@@ -55,6 +61,17 @@ function App() {
           <option value="default">Sort</option>
           <option value="score">Top Rated</option>
           <option value="title">A-Z</option>
+        </select>
+
+        {/* FILTER (NEW) */}
+        <select
+          value={minScore}
+          onChange={(e) => setMinScore(Number(e.target.value))}
+        >
+          <option value="0">All Scores</option>
+          <option value="7">7+</option>
+          <option value="8">8+</option>
+          <option value="9">9+</option>
         </select>
       </div>
 
@@ -75,7 +92,7 @@ function App() {
                 : "No description"}
             </p>
 
-            <span>⭐ {anime.score || "N/A"}</span>
+            <span>⭐ {anime.score ?? "N/A"}</span>
           </div>
         ))}
       </div>
