@@ -10,33 +10,29 @@ body {
   text-align: center;
 }
 
-h1 {
-  margin-bottom: 20px;
-}
-
-/* CONTROLS */
 .controls {
   display: flex;
   gap: 10px;
   justify-content: center;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .controls input,
-.controls select {
+.controls select,
+.controls button {
   padding: 8px;
   border-radius: 6px;
   border: none;
+  cursor: pointer;
 }
 
-/* GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
 }
 
-/* CARD */
 .card {
   background: #1e293b;
   padding: 10px;
@@ -61,5 +57,8 @@ h1 {
 .card span {
   display: block;
   margin-top: 8px;
-  font-weight: bold;
+}
+
+.card button {
+  margin-top: 8px;
 }

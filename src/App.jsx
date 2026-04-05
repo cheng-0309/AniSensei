@@ -7,6 +7,9 @@ function App() {
   const [sortType, setSortType] = useState("default");
   const [minScore, setMinScore] = useState(0);
 
+  const [favorites, setFavorites] = useState([]);
+  const [showFavorites, setShowFavorites] = useState(false);
+
   useEffect(() => {
     fetch("https://api.jikan.moe/v4/anime")
       .then((res) => res.json())
@@ -14,22 +17,31 @@ function App() {
       .catch((err) => console.error(err));
   }, []);
 
-  // SEARCH
+  // FAVORITE TOGGLE
+  const toggleFavorite = (id) => {
+    setFavorites((prev) =>
+      prev.includes(id)
+        ? prev.filter((f) => f !== id)
+        : [...prev, id]
+    );
+  };
+
+  // FILTER (search + score + favorites view)
   const filtered = animeList
     .filter((anime) =>
       (anime.title || "")
         .toLowerCase()
         .includes(search.toLowerCase())
     )
-    // SCORE FILTER (new feature)
-    .filter((anime) => (anime.score ?? 0) >= minScore);
+    .filter((anime) => (anime.score ?? 0) >= minScore)
+    .filter((anime) =>
+      showFavorites ? favorites.includes(anime.mal_id) : true
+    );
 
-  // SORT (FIXED null issue)
+  // SORT
   const sorted = [...filtered].sort((a, b) => {
     if (sortType === "score") {
-      const scoreA = a.score ?? 0;
-      const scoreB = b.score ?? 0;
-      return scoreB - scoreA;
+      return (b.score ?? 0) - (a.score ?? 0);
     }
 
     if (sortType === "title") {
@@ -45,7 +57,6 @@ function App() {
 
       {/* CONTROLS */}
       <div className="controls">
-        {/* SEARCH */}
         <input
           type="text"
           placeholder="Search anime..."
@@ -53,7 +64,6 @@ function App() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        {/* SORT */}
         <select
           value={sortType}
           onChange={(e) => setSortType(e.target.value)}
@@ -63,7 +73,6 @@ function App() {
           <option value="title">A-Z</option>
         </select>
 
-        {/* FILTER (NEW) */}
         <select
           value={minScore}
           onChange={(e) => setMinScore(Number(e.target.value))}
@@ -73,6 +82,11 @@ function App() {
           <option value="8">8+</option>
           <option value="9">9+</option>
         </select>
+
+        {/* FAVORITES VIEW TOGGLE */}
+        <button onClick={() => setShowFavorites(!showFavorites)}>
+          {showFavorites ? "Show All" : "Show Favorites"}
+        </button>
       </div>
 
       {/* GRID */}
@@ -93,6 +107,13 @@ function App() {
             </p>
 
             <span>⭐ {anime.score ?? "N/A"}</span>
+
+            {/* FAVORITE BUTTON */}
+            <button onClick={() => toggleFavorite(anime.mal_id)}>
+              {favorites.includes(anime.mal_id)
+                ? "❤️ Favorited"
+                : "🤍 Add"}
+            </button>
           </div>
         ))}
       </div>
