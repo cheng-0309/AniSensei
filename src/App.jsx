@@ -3,6 +3,8 @@ import "./App.css";
 
 function App() {
   const [animeList, setAnimeList] = useState([]);
+  const [page, setPage] = useState(1);
+
   const [search, setSearch] = useState("");
   const [sortType, setSortType] = useState("default");
   const [minScore, setMinScore] = useState(0);
@@ -10,12 +12,37 @@ function App() {
   const [favorites, setFavorites] = useState([]);
   const [showFavorites, setShowFavorites] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
+  // 🔥 FETCH (API SEARCH + PAGINATION)
   useEffect(() => {
-    fetch("https://api.jikan.moe/v4/anime")
-      .then((res) => res.json())
-      .then((data) => setAnimeList(data.data))
-      .catch((err) => console.error(err));
-  }, []);
+    const fetchAnime = async () => {
+      setLoading(true);
+
+      try {
+        const url = search.trim()
+          ? `https://api.jikan.moe/v4/anime?q=${search}`
+          : `https://api.jikan.moe/v4/anime?page=${page}`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (search.trim()) {
+          // replace list when searching
+          setAnimeList(data.data);
+        } else {
+          // append list when browsing
+          setAnimeList((prev) => [...prev, ...data.data]);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnime();
+  }, [page, search]);
 
   // FAVORITE TOGGLE
   const toggleFavorite = (id) => {
@@ -26,13 +53,8 @@ function App() {
     );
   };
 
-  // FILTER (search + score + favorites view)
+  // FILTER (score + favorites only)
   const filtered = animeList
-    .filter((anime) =>
-      (anime.title || "")
-        .toLowerCase()
-        .includes(search.toLowerCase())
-    )
     .filter((anime) => (anime.score ?? 0) >= minScore)
     .filter((anime) =>
       showFavorites ? favorites.includes(anime.mal_id) : true
@@ -61,7 +83,10 @@ function App() {
           type="text"
           placeholder="Search anime..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1); // reset page when searching
+          }}
         />
 
         <select
@@ -83,7 +108,6 @@ function App() {
           <option value="9">9+</option>
         </select>
 
-        {/* FAVORITES VIEW TOGGLE */}
         <button onClick={() => setShowFavorites(!showFavorites)}>
           {showFavorites ? "Show All" : "Show Favorites"}
         </button>
@@ -108,7 +132,6 @@ function App() {
 
             <span>⭐ {anime.score ?? "N/A"}</span>
 
-            {/* FAVORITE BUTTON */}
             <button onClick={() => toggleFavorite(anime.mal_id)}>
               {favorites.includes(anime.mal_id)
                 ? "❤️ Favorited"
@@ -117,6 +140,15 @@ function App() {
           </div>
         ))}
       </div>
+
+      {/* LOAD MORE (only when NOT searching & NOT in favorites view) */}
+      {!search && !showFavorites && (
+        <div className="center">
+          <button onClick={() => setPage((prev) => prev + 1)}>
+            {loading ? "Loading..." : "Load More"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
