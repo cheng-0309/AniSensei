@@ -1,64 +1,256 @@
+/* RESET */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0f172a;
+  font-family: 'Poppins', sans-serif;
+  background: #020617;
   color: white;
 }
 
-.container {
-  padding: 20px;
-  text-align: center;
+/* HERO SECTION */
+.hero {
+  height: 65vh;
+  position: relative;
+  background: url("https://wallpapercave.com/wp/wp9420716.jpg") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* DARK OVERLAY */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.85),
+    rgba(0,0,0,0.6),
+    rgba(0,0,0,0.9)
+  );
+}
+
+/* CONTENT */
+.hero-overlay {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 700px;
+}
+
+/* TITLE */
+.hero-title {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 20px;
+
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* SEARCH WRAPPER */
+.hero-search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* SEARCH BAR */
+.hero-search {
+  display: flex;
+  align-items: center;
+
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+
+  border-radius: 50px;
+  padding: 6px;
+
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* INPUT */
+.hero-search input {
+  flex: 1;
+  padding: 12px 16px;
+
+  border: none;
+  outline: none;
+  background: transparent;
+  color: white;
+  font-size: 14px;
+}
+
+/* BUTTON */
+.hero-search button {
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 50px;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.hero-search button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(56,189,248,0.6);
+}
+
+/* SUBTEXT */
+.hero-subtext {
+  margin-top: 15px;
+  color: #cbd5f5;
+  font-size: 14px;
+}
+
+/* CTA */
+.cta-btn {
+  margin-top: 15px;
+  padding: 12px 20px;
+  background: #f97316;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+/* DROPDOWN */
+.search-dropdown {
+  position: absolute;
+  top: 110%;
+  width: 100%;
+
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+
+  border-radius: 12px;
+  overflow: hidden;
+
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+  z-index: 10;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.dropdown-item:hover {
+  background: rgba(56,189,248,0.1);
+}
+
+.dropdown-item img {
+  width: 40px;
+  height: 55px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+/* MAIN CONTAINER */
+.main-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: -60px auto 30px;
+  padding: 25px;
+
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(20px);
+
+  border-radius: 20px;
+}
+
+/* CONTROLS */
 .controls {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
-.controls input,
 .controls select,
 .controls button {
-  padding: 8px;
-  border-radius: 6px;
-  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+
+  background: rgba(30, 41, 59, 0.8);
+  color: white;
   cursor: pointer;
+
+  transition: 0.25s;
 }
 
+.controls select:hover,
+.controls button:hover {
+  border-color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56,189,248,0.4);
+}
+
+/* GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
 }
 
+/* CARD */
 .card {
-  background: #1e293b;
-  padding: 10px;
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 14px;
+  padding: 12px;
+
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+/* IMAGE */
+.card img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
   border-radius: 10px;
 }
 
-.card img {
-  width: 100%;
-  border-radius: 8px;
-}
-
+/* TEXT */
 .card h3 {
-  font-size: 14px;
-  margin: 10px 0;
+  font-size: 16px;
+  margin: 10px 0 5px;
 }
 
 .card p {
-  font-size: 12px;
-  color: #cbd5f5;
+  font-size: 13px;
+  color: #94a3b8;
 }
 
 .card span {
   display: block;
-  margin-top: 8px;
+  margin-top: 5px;
 }
 
+/* BUTTON */
 .card button {
   margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  background: #334155;
+  color: white;
+  cursor: pointer;
+}
+
+/* LOAD MORE */
+.center {
+  text-align: center;
+  margin-top: 20px;
 }
